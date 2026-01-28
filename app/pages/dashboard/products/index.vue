@@ -1,0 +1,4 @@
+<template>
+  Dashboard Product
+
+</template>
