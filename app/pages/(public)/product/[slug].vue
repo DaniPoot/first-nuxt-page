@@ -1,75 +1,12 @@
 <script setup lang="ts">
 const route = useRoute();
 const slug = route.params.slug as string;
-// Simulación de productos - en producción esto vendría de una API
-const products = ref<Product[]>([
-  {
-    id: '1',
-    slug: 'cloud-storage-saas',
-    name: 'Cloud Storage Pro',
-    description:
-      'Servicio de almacenamiento en la nube seguro y escalable para empresas de cualquier tamaño.',
-    price: 100,
-    images: [
-      'https://picsum.photos/600/400?random=1',
-      'https://picsum.photos/600/400?random=2',
-      'https://picsum.photos/600/400?random=3',
-    ],
-    tags: ['nube', 'almacenamiento', 'SaaS', 'seguridad'],
-  },
-  {
-    id: '2',
-    slug: 'managed-it-services',
-    name: 'IT Support 24/7',
-    description:
-      'Soporte técnico y gestión integral de infraestructura TI, disponible las 24 horas, todos los días.',
-    price: 200,
-    images: [
-      'https://picsum.photos/600/400?random=4',
-      'https://picsum.photos/600/400?random=5',
-      'https://picsum.photos/600/400?random=6',
-    ],
-    tags: ['soporte', 'infraestructura', 'TI', 'empresa'],
-  },
-  {
-    id: '3',
-    slug: 'cybersecurity-suite',
-    name: 'CyberSecurity Suite',
-    description:
-      'Solución completa de ciberseguridad con protección contra amenazas avanzadas, firewall y análisis de vulnerabilidades.',
-    price: 300,
-    images: [
-      'https://picsum.photos/600/400?random=7',
-      'https://picsum.photos/600/400?random=8',
-      'https://picsum.photos/600/400?random=9',
-    ],
-    tags: ['ciberseguridad', 'firewall', 'protección', 'vulnerabilidad'],
-  },
-  {
-    id: '4',
-    slug: 'ai-chatbot-platform',
-    name: 'Plataforma Chatbot IA',
-    description:
-      'Plataforma inteligente para la creación y gestión de chatbots con inteligencia artificial para servicio al cliente.',
-    price: 400,
-    images: [
-      'https://picsum.photos/600/400?random=10',
-      'https://picsum.photos/600/400?random=11',
-      'https://picsum.photos/600/400?random=12',
-    ],
-    tags: ['IA', 'chatbot', 'automatización', 'servicio al cliente'],
-  },
-]);
-// Buscar el producto por slug (id en este caso)
-const product = computed(() => {
-  return products.value.find((p) => p.slug === slug);
-});
+
+const { product } = await useProduct(slug)
+
 // Si no se encuentra el producto, mostrar error 404
 if (!product.value) {
-  throw createError({
-    statusCode: 404,
-    statusMessage: 'Producto no encontrado',
-  });
+  navigateTo('/404')
 }
 // Estado para la imagen seleccionada
 const selectedImageIndex = ref(0);
@@ -110,8 +47,8 @@ const totalPrice = computed(() => {
         <div class="grid grid-cols-3 gap-4">
           <button v-for="(image, index) in product.images" :key="index" @click="selectedImageIndex = index"
             class="rounded-lg overflow-hidden border-2 transition-all cursor-pointer" :class="selectedImageIndex === index
-                ? 'border-primary-500'
-                : 'border-gray-200 hover:border-gray-300'
+              ? 'border-primary-500'
+              : 'border-gray-200 hover:border-gray-300'
               ">
             <img :src="image" :alt="`${product.name} - Image ${index + 1}`" class="w-full h-24 object-cover" />
           </button>
@@ -183,7 +120,9 @@ const totalPrice = computed(() => {
       <h2 class="text-2xl font-bold text-gray-900 mb-6">
         Productos relacionados
       </h2>
-      <LazyProductsGrid hydrate-on-visible :products="products.filter((p) => p.id !== product?.id).slice(0, 3)" />
+      <!-- <LazyProductsGrid hydrate-on-visible :products="productSuggestions || []" /> -->
+      <!-- <LazyProjectSuggestions :slug="slug" /> -->
+      <LazyProductSuggestions hydrate-on-visible :slug="slug" />
     </div>
   </div>
 </template>
