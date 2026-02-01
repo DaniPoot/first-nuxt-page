@@ -2,6 +2,7 @@
 import type { NavigationMenuItem } from '@nuxt/ui'
 
 const route = useRoute()
+const { isLoggedIn, logout, isAdmin } = useAuthentication()
 
 const items = computed<NavigationMenuItem[]>(() => [
   {
@@ -25,14 +26,6 @@ const items = computed<NavigationMenuItem[]>(() => [
   }
 ])
 
-const responsiveMenu = ref([
-  ...items.value,
-  {
-    label: 'Iniciar sesión',
-    to: '/login',
-    active: route.path.startsWith('/login')
-  }
-])
 </script>
 
 <template>
@@ -41,7 +34,13 @@ const responsiveMenu = ref([
       <IconsNuxtui class="h-6 w-auto" />
     </template>
 
-    <UNavigationMenu :items="responsiveMenu" />
+    <UNavigationMenu :items="items" />
+    <ClientOnly>
+      <UNavigationMenu v-if="isAdmin" :items="[{
+        label: 'Dashboard',
+        to: '/dashboard'
+      }]" />
+    </ClientOnly>
 
     <template #right>
       <UColorModeButton />
@@ -49,7 +48,12 @@ const responsiveMenu = ref([
         <UButton color="neutral" variant="ghost" to="https://github.com/nuxt/ui" target="_blank"
           icon="i-simple-icons-github" aria-label="GitHub" />
       </UTooltip>
-      <UButton color="primary" variant="solid" icon="i-heroicons-user-circle" to="/login" label="Login" />
+      <ClientOnly>
+        <UButton v-if="!isLoggedIn" color="primary" variant="solid" icon="i-heroicons-user-circle" to="/login"
+          label="Login" />
+        <UButton v-else color="primary" variant="ghost" icon="i-heroicons-user-circle" label="Cerrar sesión"
+          @click="logout" />
+      </ClientOnly>
     </template>
   </UHeader>
 </template>

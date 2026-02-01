@@ -5,6 +5,9 @@ import {
   type CommandPaletteItem,
   type NavigationMenuItem,
 } from '@nuxt/ui';
+
+const { user } = useAuthentication()
+
 const items: NavigationMenuItem[][] = [
   [
     {
@@ -77,7 +80,9 @@ const searchGroups = ref<CommandPaletteGroup<CommandPaletteItem>[]>([
   <UDashboardSidebar collapsible resizable :ui="{ footer: 'border-t border-default' }">
     <template #header="{ collapsed }" class="flex items-center gap-2">
       <UDashboardSidebarCollapse variant="subtle" />
-      <IconsNuxtui class="h-6 w-auto" v-if="!collapsed" />
+      <NuxtLink to="/">
+        <IconsNuxtui class="h-6 w-auto" v-if="!collapsed" />
+      </NuxtLink>
     </template>
 
     <template #default="{ collapsed }">
@@ -112,7 +117,7 @@ const searchGroups = ref<CommandPaletteGroup<CommandPaletteItem>[]>([
     <template #footer="{ collapsed }">
       <UButton :avatar="{
         src: 'https://github.com/benjamincanac.png',
-      }" :label="collapsed ? undefined : 'Benjamin'" color="neutral" variant="ghost" class="w-full"
+      }" :label="collapsed ? undefined : user?.name" color="neutral" variant="ghost" class="w-full"
         :block="collapsed" />
     </template>
   </UDashboardSidebar>
