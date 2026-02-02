@@ -3,7 +3,7 @@
     <DashboardSidebar />
     <UDashboardPanel>
       <DashboardNavbar />
-      <div class="flex-1 orverflow-auto p-6">
+      <div class="flex-1 overflow-auto p-6">
         <slot />
       </div>
     </UDashboardPanel>
