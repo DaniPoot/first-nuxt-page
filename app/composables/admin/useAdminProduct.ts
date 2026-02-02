@@ -9,6 +9,10 @@ export const useAdminProduct = async (id: string) => {
     // form-Multipar 
     formData.append('data', JSON.stringify(data))
 
+    if (files) {
+      files.forEach(file => formData.append('files', file))
+    }
+
     if (isCreating) {
       console.log({ creating: data })
       const { product } = await $fetch('/api/admin/product', {

@@ -29,6 +29,9 @@ dependencies:
   bcryptjs:
     specifier: ^3.0.3
     version: 3.0.3
+  cloudinary:
+    specifier: ^2.9.0
+    version: 2.9.0
   eslint:
     specifier: ^9.0.0
     version: 9.39.2
@@ -44,6 +47,9 @@ dependencies:
   tailwindcss:
     specifier: ^4.1.18
     version: 4.1.18
+  uuid:
+    specifier: ^13.0.0
+    version: 13.0.0
   vue:
     specifier: ^3.5.27
     version: 3.5.27(typescript@5.9.3)
@@ -5380,6 +5386,13 @@ packages:
     engines: {node: '>=0.8'}
     dev: false
 
+  /cloudinary@2.9.0:
+    resolution: {integrity: sha512-F3iKMOy4y0zy0bi5JBp94SC7HY7i/ImfTPSUV07iJmRzH1Iz8WavFfOlJTR1zvYM/xKGoiGZ3my/zy64In0IQQ==}
+    engines: {node: '>=9'}
+    dependencies:
+      lodash: 4.17.23
+    dev: false
+
   /cluster-key-slot@1.1.2:
     resolution: {integrity: sha512-RMr0FhtfXemyinomL4hrWcYJxmX6deFdCxpJzhDttxgO1+bcCnkk+9drydLVDmAMG7NE6aN/fl4F7ucU/90gAA==}
     engines: {node: '>=0.10.0'}
@@ -10365,6 +10378,11 @@ packages:
 
   /util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
+    dev: false
+
+  /uuid@13.0.0:
+    resolution: {integrity: sha512-XQegIaBTVUjSHliKqcnFqYypAd4S+WCYt5NIeRs6w/UAry7z8Y9j5ZwRRL4kzq9U3sD6v+85er9FvkEaBpji2w==}
+    hasBin: true
     dev: false
 
   /valibot@1.2.0(typescript@5.9.3):

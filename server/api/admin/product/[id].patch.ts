@@ -13,10 +13,17 @@ const bodySchema = z.object({
   tags: z.array(z.string())
 })
 
+interface FileData {
+  name: string
+  type: string
+  data: Buffer
+}
+
 export default defineEventHandler(async (event) => {
   const id = getRouterParam(event, 'id') as string
 
   const formData = await readMultipartFormData(event)
+  const files: FileData[] = []
   // const body = new FormData(formData)
 
   if (!formData || formData.length === 0) {
@@ -28,10 +35,19 @@ export default defineEventHandler(async (event) => {
   }
 
   let dataString = ''
+
   for (const part of formData) {
     if (part.name === 'data' && part.data) {
       dataString = part.data.toString('utf-8')
       console.log({ dataString })
+    }
+
+    if (part.name === 'files' && part.filename) {
+      files.push({
+        name: part.filename,
+        type: part.type || 'application/octet-stream',
+        data: part.data
+      })
     }
   }
 
@@ -60,6 +76,17 @@ export default defineEventHandler(async (event) => {
     })
   }
 
+  if (files.length > 0) {
+    const uploadFiles = await Promise.all(
+      files.map(async (file) => {
+        const url = await fileUpload(file.data)
+        return url
+      })
+    )
+
+    body.data.images = [...body.data.images, ...uploadFiles]
+  }
+
   const updatedProduct = await prisma.product.update({
     where: {
       id: +id
@@ -73,7 +100,6 @@ export default defineEventHandler(async (event) => {
 
   return {
     message: 'Product updated',
-    product: updatedProduct,
-    files: []
+    product: updatedProduct
   }
 })
