@@ -1,18 +1,63 @@
 <script setup lang="ts">
-defineProps<{
+import type { User } from '#auth-utils';
+import type { ProductReview } from '~/generated/prisma/client';
+const props = defineProps<{
   buttonLabel: string;
+  slug: string
+  user: User | null
 }>();
+
+const emit = defineEmits<{
+  (event: 'review-posted', review: ProductReview): void
+}>()
+
+const toast = useToast()
+
 const reviewText = ref('');
 const rating = ref(0);
+const userTitle = ref('');
 const isOpen = ref(false);
-const submitReview = () => {
-  console.log('submitReview');
+
+
+const submitReview = async () => {
+  try {
+    const review = await $fetch<ProductReview>(`/api/product/${props.slug}/reviews`, {
+      method: 'POST',
+      body: {
+        rating: rating.value,
+        review: reviewText.value,
+        userTitle: userTitle.value
+      }
+    })
+
+    emit('review-posted', review)
+    toast.add({
+      title: 'Reseña enviada',
+      description: 'Tu reseña ha sido enviada correctamente'
+    })
+
+  } catch (error) {
+    toast.add({
+      title: 'Error al enviar resña',
+      description: error instanceof Error ? error.message : 'Uknown error',
+      color: 'error'
+    })
+
+  }
   isOpen.value = false;
 };
+
+const handleCloseModal = (event: boolean) => {
+  isOpen.value = event
+  reviewText.value = ''
+  rating.value = 0
+  userTitle.value = ''
+}
 </script>
 
 <template>
-  <UModal :open="isOpen" @close="isOpen = false" title="Añadir reseña" description="Deja tu reseña sobre el producto.">
+  <UModal :open="isOpen" @close="isOpen = false" @update:open="handleCloseModal" title="Añadir reseña"
+    description="Deja tu reseña sobre el producto.">
     <UButton :label="buttonLabel" color="primary" variant="subtle" @click="isOpen = true" />
 
     <template #content>
@@ -30,6 +75,13 @@ const submitReview = () => {
               <UIcon name="i-lucide-star" class="text-gray-600 text-xl cursor-pointer"
                 :class="{ 'text-yellow-500': rating >= star }" v-for="star in 5" :key="star" @click="rating = star" />
             </div>
+          </div>
+
+          <div class="col-span-1">
+            <UInput :model-value="user?.name" class="w-full" :rows="6" disabled />
+          </div>
+          <div class="col-span-1">
+            <UInput v-model="userTitle" placeholder="Titulo del usuario" class="w-full" :rows="6" />
           </div>
 
           <div class="col-span-1">

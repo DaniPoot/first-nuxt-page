@@ -3,8 +3,10 @@ import { siteReviews } from './site-reviews.seed.ts';
 import { products } from './products.seed';
 import { users } from './users.seed';
 import bcrypt from 'bcryptjs'
+import { productReviews } from './product-reviews.seed.ts';
 
 async function seedDatabase() {
+  await prisma.productReview.deleteMany()
   await prisma.siteReview.deleteMany()
   await prisma.product.deleteMany()
   await prisma.user.deleteMany()
@@ -24,6 +26,19 @@ async function seedDatabase() {
 
   await prisma.user.createMany({
     data: usersWithHashPassword
+  })
+
+  const productsCreated = await prisma.product.findMany()
+  const usersCreated = await prisma.user.findMany()
+
+  const productReviewsCreated = productReviews.map(review => ({
+    ...review,
+    productId: productsCreated[Math.floor(Math.random() * products.length)].id,
+    userId: usersCreated[Math.floor(Math.random() * users.length)].id
+  }))
+
+  await prisma.productReview.createMany({
+    data: productReviewsCreated
   })
 
   console.log('Database seede successfully')
